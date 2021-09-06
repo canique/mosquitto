@@ -358,7 +358,7 @@ int db__message_delete_outgoing(struct mosquitto *context, uint16_t mid, enum mo
 	}
 	
 	//if we have a inflight max. boundary, and we could not find the MID
-	if(context->msgs_out.inflight_maximum != 0 && !foundMid){
+	if(context->msgs_out.inflight_maximum != 0 && !found_mid){
 		//send quota has been incremented because we thought this is a valid ACK, but since it's invalid, send quota needs to be decremented again
 		util__decrement_send_quota(context);
 
