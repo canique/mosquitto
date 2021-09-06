@@ -47,8 +47,8 @@ bool db__ready_for_flight(struct mosquitto *context, enum mosquitto_msg_directio
 		msgs = &context->msgs_out;
 		log__printf(context, MOSQ_LOG_DEBUG, "db_ready_for_flight: OUTBOUND inflight max %d, inflight quota %d, QoS %d", msgs->inflight_maximum, msgs->inflight_quota, qos);
 	}else{
-		log__printf(context, MOSQ_LOG_DEBUG, "db_ready_for_flight: INBOUND inflight max %d, inflight quota %d, QoS %d", msgs->inflight_maximum, msgs->inflight_quota, qos);
 		msgs = &context->msgs_in;
+		log__printf(context, MOSQ_LOG_DEBUG, "db_ready_for_flight: INBOUND inflight max %d, inflight quota %d, QoS %d", msgs->inflight_maximum, msgs->inflight_quota, qos);
 	}
 
 	if(msgs->inflight_maximum == 0 && db.config->max_inflight_bytes == 0){
