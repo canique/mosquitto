@@ -29,6 +29,8 @@ Contributors:
 #include "time_mosq.h"
 #include "util_mosq.h"
 
+#include "logging_mosq.h"
+
 /**
  * Is this context ready to take more in flight messages right now?
  * @param context the client context of interest
@@ -357,10 +359,14 @@ int db__message_delete_outgoing(struct mosquitto *context, uint16_t mid, enum mo
 		}
 	}
 	
+	log__printf(NULL, MOSQ_LOG_DEBUG, "db__message_delete_outgoing: Received mid %d, inflight quota %d, msg_index %d", mid, context->msgs_out.inflight_quota, msg_index);
+	
 	//if we have a inflight max. boundary, and we could not find the MID
 	if(context->msgs_out.inflight_maximum != 0 && !found_mid){
 		//send quota has been incremented because we thought this is a valid ACK, but since it's invalid, send quota needs to be decremented again
 		util__decrement_send_quota(context);
+		
+		log__printf(NULL, MOSQ_LOG_DEBUG, "db__message_delete_outgoing: Invalid MID. Decrementing send quota. Inflight quota %d", context->msgs_out.inflight_quota);
 
 		//MOSQ_ERR_NOT_FOUND should be thrown if MID is invalid
 	 	return MOSQ_ERR_NOT_FOUND;
@@ -375,6 +381,8 @@ int db__message_delete_outgoing(struct mosquitto *context, uint16_t mid, enum mo
 				break;
 			}
 		}
+		
+		log__printf(NULL, MOSQ_LOG_DEBUG, "db__message_delete_outgoing: msg index %d, max outbound inflight %d, inflight quota %d", msg_index, context->msgs_out.inflight_maximum, context->msgs_out.inflight_quota);
 
 		msg_index++;
 		tail->timestamp = db.now_s;
