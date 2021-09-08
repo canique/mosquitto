@@ -575,7 +575,7 @@ int db__message_insert(struct mosquitto *context, uint16_t mid, enum mosquitto_m
 	}
 #endif
 
-	if(dir == mosq_md_out && msg->qos > 0){
+	if(dir == mosq_md_out && msg->qos > 0 && state != mosq_ms_queued){ //state must be mosq_ms_publish_qos1 || mosq_ms_publish_qos2
 		util__decrement_send_quota(context);
 	}
 
